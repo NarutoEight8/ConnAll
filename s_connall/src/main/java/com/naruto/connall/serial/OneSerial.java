@@ -51,7 +51,6 @@ public class OneSerial {
         });
     }
     public void sendMessage(final Context context,final String hexStr) {
-        if(System.currentTimeMillis() <= SerialManager.restartTime)return;//重启后不要马上发包
         if(serialRead==null)return;
         SerialWrite.sendData(context, port, ByteTransUtil.hexStringToBytes(hexStr));
     }

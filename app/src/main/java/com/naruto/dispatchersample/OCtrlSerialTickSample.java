@@ -3,25 +3,7 @@ package com.naruto.dispatchersample;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.kulala.dispatcher.OEventName;
-import com.kulala.dispatcher.param.ODispatcher;
-import com.kulala.dispatcher.param.OEventObject;
 import com.naruto.connall.serial.TickSingleSend;
-import com.nathanli.managers.ManagerCommon;
-import com.nathanli.managers.ManagerMixQiCai;
-import com.nathanli.managers.ManagerSmoke;
-import com.nathanli.managers.ManagerTips;
-import com.nathanli.managers.data.DataMuti;
-import com.nathanli.myretrofit.BuildConfig;
-import com.nathanli.protocols.CtrlMoniSingleSend;
-import com.nathanli.protocols.SerialInterface;
-import com.nathanli.protocols.road.SocketClientSmoke;
-import com.nathanli.toolshelper.GlobalInitBase;
-import com.nathanli.toolshelper.TimeDelayTask;
-import com.nathanli.toolshelper.datatypetrans.ByteHelper;
-import com.nathanli.toolshelper.fileoperate.LogMe;
-
-import static com.nathanli.managers.ManagerMixQiCai.PORTINTYPE_QI5;
 
 
 /**

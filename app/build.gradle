@@ -29,7 +29,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'com.tonystark.android:socket:4.1.0'
     implementation project(':s_connall')
-//    implementation 'com.github.nathan96169:Dispatcher:1.0.5'
+//    implementation 'com.github.repository8:narutoeight8.connall:1.0.1'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'

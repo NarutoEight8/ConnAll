@@ -11,19 +11,12 @@ import cn.shorr.serialport.SerialPortUtil;
 /**
  * 控制板接6口；HC/CO传感器接5口；NO传感器接4口 ；上位机可以用3口测试
  */
-public class SerialManager {
+public abstract class SerialManager {
     private String TAG = SerialManager.class.getSimpleName();
     private SerialPortUtil serialPortUtil;
     private OneSerial[] oneSerials;
     private Context context;
-    public static long restartTime = 0;
-    // ========================out======================
-    private static SerialManager _instance;
-    public static SerialManager getInstance() {
-        if (_instance == null)
-            _instance = new SerialManager();
-        return _instance;
-    }
+    private long restartTime = 0;
     // ========================out======================
     private void init(){
         oneSerials = new OneSerial[7];
@@ -31,15 +24,16 @@ public class SerialManager {
             oneSerials[i]= new OneSerial(i);
         }
     }
-    public void changeSerial(int port,String serialName,int baut, long deley, OneSerial.OnSerialListener listener) {
+    protected void changeSerial(int port,String serialName,int baut, long deley, OneSerial.OnSerialListener listener) {
         if(oneSerials == null)init();
         oneSerials[port].changeSerial(serialName,baut,deley,listener);
     }
-    public void sendMessage(int port,String hexStr){
+    protected void sendMessage(int port,String hexStr){
+        if(System.currentTimeMillis() <= restartTime)return;//重启后不要马上发包
         oneSerials[port].sendMessage(context,hexStr);
     }
 
-    public void closeSerialPort() {
+    protected void closeSerialPort() {
         if(oneSerials == null)return;
         for (int i = 0; i < oneSerials.length; i++) {
             oneSerials[i].removeReadListener();
@@ -47,11 +41,11 @@ public class SerialManager {
         if (serialPortUtil != null) serialPortUtil.unBindService();
         serialPortUtil = null;
     }
-    public void restartSerial(Context context){
+    /**GlobalInitBase.onRestartSerial();//此处重设定串口指令发送,口改了指令也会不同**/
+    protected void restartSerial(Context context){
         this.context = context;
         if(oneSerials == null)init();
         restartTime = System.currentTimeMillis()+2000;
-        GlobalInitBase.onRestartSerial();//此处重设定串口指令发送,口改了指令也会不同
 
         closeSerialPort();
         //配置串口参数
@@ -74,7 +68,7 @@ public class SerialManager {
         }
 //        LogMe.showInDebug(TAG+ "serial ReConnOK");
     }
-    public void checkSerialList() {
+    private void checkSerialList() {
         SerialPortFinder serialPortFinder = new SerialPortFinder();
         String[] devices = serialPortFinder.getAllDevicesPath();
         if (devices != null) for (String str : devices) {
