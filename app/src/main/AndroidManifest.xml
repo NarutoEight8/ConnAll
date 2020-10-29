@@ -19,7 +19,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ActivityNext"
+        <activity
+            android:name=".ActivityNext"
+            android:launchMode="singleTask"/>
+        <activity
+            android:name=".BlueActivity"
             android:launchMode="singleTask"/>
     </application>
 

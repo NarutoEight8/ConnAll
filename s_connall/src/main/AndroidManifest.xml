@@ -10,5 +10,11 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-    <application android:networkSecurityConfig="@xml/network_security_config" />
+    <application android:networkSecurityConfig="@xml/network_security_config" >
+        <activity android:name=".blue.blue_2_0.DeviceDiscoveryActivity"
+            android:label="选取连接设备"
+            android:launchMode="singleInstance"
+            android:theme="@android:style/Theme.Dialog"
+            android:configChanges="orientation|keyboardHidden" />
+    </application>
 </manifest>
