@@ -9,20 +9,18 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.naruto.dispatchersample.databinding.ActivityMainBinding;
+
 
 public class ActivityNext extends AppCompatActivity {
-    private TextView txt_result,txt_name;
-    private Button btn_start,btn_switch;
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        txt_name = findViewById(R.id.txt_name);
-        txt_result = findViewById(R.id.txt_result);
-        btn_start = findViewById(R.id.btn_start);
-        btn_switch = findViewById(R.id.btn_switch);
-        txt_name.setText("Activity:"+ActivityNext.class.getSimpleName());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        binding.txtName.setText("Activity:"+ActivityNext.class.getSimpleName());
     }
 
     @Override
@@ -33,12 +31,12 @@ public class ActivityNext extends AppCompatActivity {
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
-        btn_start.setOnClickListener(new View.OnClickListener() {
+        binding.btnBlue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
             }
         });
-        btn_switch.setOnClickListener(new View.OnClickListener() {
+        binding.btnSerial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
