@@ -195,11 +195,12 @@ public class DeviceDiscoveryActivity extends Activity {
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 // 得到蓝牙设备
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                String values = device.getName() + "\n" + device.getAddress();
                 // 如果是已配对的则略过，已得到显示，其余的在添加到列表中进行显示
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
-                    mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                    if(mNewDevicesArrayAdapter.getPosition(values) < 0)mNewDevicesArrayAdapter.add(values);
                 }else{  //添加到已配对设备列表
-                    mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                    if(mPairedDevicesArrayAdapter.getPosition(values) < 0)mPairedDevicesArrayAdapter.add(values);
                 }
                 Log.e(TAG,device.getName() + "---" + device.getAddress());
                 // 搜索完成action
