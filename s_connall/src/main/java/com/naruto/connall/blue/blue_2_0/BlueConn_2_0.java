@@ -3,6 +3,7 @@ package com.naruto.connall.blue.blue_2_0;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.util.Log;
 
 import androidx.annotation.CallSuper;
 
@@ -87,6 +88,7 @@ public abstract class BlueConn_2_0 {
         _device = _bluetooth.getRemoteDevice(address);
         // 用服务号得到socket
         try{
+            if(_socket == null) Log.d("TAG", "onScanedDevice: "+_device.getName());
             _socket = _device.createRfcommSocketToServiceRecord(UUID.fromString(MY_UUID));
         }catch(IOException e){
             onConnectFail("连接失败！socket错");
