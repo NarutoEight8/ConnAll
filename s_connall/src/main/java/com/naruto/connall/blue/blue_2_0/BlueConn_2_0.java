@@ -3,6 +3,7 @@ package com.naruto.connall.blue.blue_2_0;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.util.Log;
 
 import androidx.annotation.CallSuper;
 
@@ -59,7 +60,10 @@ public abstract class BlueConn_2_0 {
     /**是否蓝牙已连接**/
     @CallSuper
     public boolean isBlueConnected(){
-        return !(_socket==null);
+        if(_socket == null)return false;
+        if(!_socket.isConnected())return false;
+        if(Math.abs(System.currentTimeMillis() - rescanTime) <= 4000)return false;
+        return true;
     }
     /**断开连接,程序退出一定要断开**/
     @CallSuper
@@ -81,41 +85,53 @@ public abstract class BlueConn_2_0 {
 
     /**onActivityResult得到扫秒的蓝牙后，执行连接动作，接收结果**/
     //接收活动结果，响应startActivityForResult()
+    private long rescanTime = 0;//扫描时二秒内不算连上
     @CallSuper
-    public void onScanedDevice(String address) {
-        // 得到蓝牙设备句柄
-        _device = _bluetooth.getRemoteDevice(address);
-        // 用服务号得到socket
-        try{
-            _socket = _device.createRfcommSocketToServiceRecord(UUID.fromString(MY_UUID));
-        }catch(IOException e){
-            onConnectFail("连接失败！socket错");
-        }
-        //连接socket
-        try{
-            _socket.connect();
-            onConnectOK(_device.getName(),_device.getAddress());
-        }catch(IOException e){
-            try{
-                onConnectFail("连接失败！socket关闭");
-                _socket.close();
-                _socket = null;
-            }catch(IOException ee){
-                onConnectFail("连接失败！socket关闭错"+ee.toString());
-            }
-            return;
-        }
+    public void onScanedDevice(final String address) {
+        rescanTime = System.currentTimeMillis();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // 得到蓝牙设备句柄
+                _device = _bluetooth.getRemoteDevice(address);
+                // 用服务号得到socket
+                try{
+                    _socket = _device.createRfcommSocketToServiceRecord(UUID.fromString(MY_UUID));
+                    Log.e(">>>  BLUE:", "conn START");
+                }catch(IOException e){
+                    Log.e(">>>  BLUE:", "conn FAIL");
+                    onConnectFail("连接失败！socket错");
+                }
+                //连接socket
+                try{
+                    _socket.connect();
+                    Log.e(">>>  BLUE:", "conn OK");
+                    onConnectOK(_device.getName(),_device.getAddress());
+                }catch(IOException e){
+                    try{
+                        onConnectFail("连接失败！socket关闭");
+                        Log.e(">>>  BLUE:", "conn FAIL socket关闭"+e.toString());
+                        _socket.close();
+                        _socket = null;
+                    }catch(IOException ee){
+                        onConnectFail("连接失败！socket关闭错"+ee.toString());
+                        Log.e(">>>  BLUE:", "conn socket关闭错");
+                    }
+                    return;
+                }
 
-        //打开接收线程
-        try{
-            _inStr = _socket.getInputStream();   //得到蓝牙数据输入流
-        }catch(IOException e){
-            onConnectFail("读取数据流失败！"+e.toString());
-            return;
-        }
-        if(!_readThreadOn){
-            new ReadThread().start();
-        }
+                //打开接收线程
+                try{
+                    _inStr = _socket.getInputStream();   //得到蓝牙数据输入流
+                }catch(IOException e){
+                    onConnectFail("读取数据流失败！"+e.toString());
+                    return;
+                }
+                if(!_readThreadOn){
+                    new ReadThread().start();
+                }
+            }
+        }).start();
     }
 
 
@@ -127,7 +143,7 @@ public abstract class BlueConn_2_0 {
             //接收线程
             while(_readThreadOn){
                 try{
-                    if(_inStr.available()==0)break;
+                    if(_inStr.available()==0)continue;
                     int           lengthTemp = 0;
                     byte[] buffer = new byte[1024];
                     while (-1 != (lengthTemp = _inStr.read(buffer))) { // read方法并不保证一次能读取1024*64个字节

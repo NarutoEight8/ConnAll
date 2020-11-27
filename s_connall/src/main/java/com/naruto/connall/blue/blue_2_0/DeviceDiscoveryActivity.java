@@ -46,6 +46,8 @@ import com.naruto.connall.R;
  Intent intent = new Intent();
  intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
 
+
+
  // 设置返回值并结束程序
  setResult(Activity.RESULT_OK, intent);
  finish();
